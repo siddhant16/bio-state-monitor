@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 @RestController
 public class HomeController {
 
-    @GetMapping("/")
-    public ResponseEntity<String> home() {
-        return ResponseEntity.ok("{\"message\": \"Bio-State Fermentation Monitor API is running. Use /api/fermentation/analyze to analyze cultures.\"}");
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("{\"message\": \"Bio-State Fermentation Monitor API is running. Use /api/fermentation/analyze to analyze cultures.\", \"status\": \"healthy\"}");
     }
 }

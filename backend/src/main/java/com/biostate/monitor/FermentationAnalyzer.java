@@ -94,9 +94,27 @@ public class FermentationAnalyzer {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("API inference failed with status code: " + response.statusCode() + " | Body: " + response.body());
+            throw new RuntimeException("API inference failed with status code: " + response.statusCode());
         }
 
-        return response.body();
+        // Extract the JSON analysis from the nested API response
+        try {
+            com.fasterxml.jackson.databind.JsonNode responseJson = objectMapper.readTree(response.body());
+            com.fasterxml.jackson.databind.JsonNode candidates = responseJson.get("candidates");
+            
+            if (candidates != null && candidates.isArray() && candidates.size() > 0) {
+                com.fasterxml.jackson.databind.JsonNode content = candidates.get(0).get("content");
+                if (content != null) {
+                    com.fasterxml.jackson.databind.JsonNode parts = content.get("parts");
+                    if (parts != null && parts.isArray() && parts.size() > 0) {
+                        String analysisJson = parts.get(0).get("text").asText();
+                        return analysisJson;
+                    }
+                }
+            }
+            throw new RuntimeException("Invalid or empty API response format");
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse API response: " + e.getMessage());
+        }
     }
 }
