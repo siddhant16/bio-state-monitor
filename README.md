@@ -2,6 +2,22 @@
 
 A full-stack application built with React + Vite for the frontend and Java Spring Boot for the backend. It is designed to capture live culture imagery, send that image data to a backend analysis service, and produce a fermentation status result.
 
+## Quick Start
+
+1. Start the backend service in one terminal:
+   ```bash
+   cd backend
+   export GEMINI_API_KEY="your_api_key"
+   mvn spring-boot:run
+   ```
+2. Start the frontend in another terminal:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+3. Open the local Vite URL shown in the terminal (usually `http://localhost:5173`).
+
 ## Architecture
 
 - **Frontend**: React 19 + Vite + Tailwind CSS + lucide-react.
@@ -27,6 +43,16 @@ A full-stack application built with React + Vite for the frontend and Java Sprin
 - Maven 3.6 or higher
 - Node.js 18 or higher
 - A valid Google Gemini API key
+
+## Environment Variables
+
+This project uses environment variables to keep secrets and ports separate from source code.
+
+- `GEMINI_API_KEY` - required by the backend to authenticate with Google Gemini.
+- `BACKEND_PORT` - optional local backend port (default `8080`).
+- `FRONTEND_PORT` - optional local frontend port (default `5173`).
+
+You can use `.env.example` as a template for local setup.
 
 ## Backend Setup
 
@@ -90,6 +116,23 @@ npm run dev
   - `cultureId` (number)
 - Authentication is handled via JWTs, and auth endpoints are available under `/auth`.
 - The backend uses an in-memory H2 database for users, cultures, and analyses.
+
+### Example Analyze Request
+
+```json
+{
+  "base64Image": "<base64 JPEG data>",
+  "cultureType": "sourdough",
+  "cultureId": 1
+}
+```
+
+## Authentication Flow
+
+1. Register a user via `POST /auth/register` with `username`, `email`, and `password`.
+2. Log in via `POST /auth/login` with `username` and `password`.
+3. Receive a JWT token from the login response.
+4. Attach the JWT to authenticated requests using the `Authorization: Bearer <token>` header.
 
 ## Notes
 
