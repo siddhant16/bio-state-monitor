@@ -1,74 +1,107 @@
 # Bio-State Fermentation Monitor
 
-A full-stack application leveraging Multimodal Vision (Gemini 2.5 Flash Vision) to analyze the biological state of sourdough and kombucha cultures via live imagery.
+A full-stack application built with React + Vite for the frontend and Java Spring Boot for the backend. It is designed to capture live culture imagery, send that image data to a backend analysis service, and produce a fermentation status result.
 
 ## Architecture
 
-- **Frontend**: React (Vite) + Tailwind CSS + lucide-react. Handles webcam capture, image to base64 encoding, and UI rendering.
-- **Backend**: Java 17 + Spring Boot. Acts as a secure proxy, storing the API key, constructing strict JSON payload schemas, and executing HTTP requests to the Gemini API.
+- **Frontend**: React 19 + Vite + Tailwind CSS + lucide-react.
+- **Backend**: Java 17 + Spring Boot 3.2.4 + Spring Security + H2 in-memory database.
+- **AI Integration**: The backend dispatches visual fermentation analysis requests to the Google Gemini generative language API.
 
 ## Prerequisites
-
-You must have the following installed on your system to run this codebase locally:
 
 - Java 17 or higher
 - Maven 3.6 or higher
 - Node.js 18 or higher
-- An active Google Gemini API Key
+- A valid Google Gemini API key
 
-## Setup & Execution
+## Backend Setup
 
-You must run the backend and frontend simultaneously in separate terminal windows. The frontend relies entirely on the backend running on port 8080.
-
-### 1. Backend Environment
-
-The Java backend requires the Gemini API key to be injected via environment variables. Do not hardcode your API key into the Java files, and do not commit it to version control.
-
-Open a terminal and navigate to the backend directory:
+1. Open a terminal and change into the backend folder:
 
 ```bash
 cd backend
 ```
 
-Set the required environment variable:
+2. Set the Gemini API key as an environment variable:
 
-- **Mac/Linux**: `export GEMINI_API_KEY="your_api_key"`
-- **Windows (CMD)**: `set GEMINI_API_KEY="your_api_key"`
-- **Windows (PowerShell)**: `$env:GEMINI_API_KEY="your_api_key"`
+- macOS / Linux:
+  ```bash
+  export GEMINI_API_KEY="your_api_key"
+  ```
+- Windows CMD:
+  ```cmd
+  set GEMINI_API_KEY="your_api_key"
+  ```
+- Windows PowerShell:
+  ```powershell
+  $env:GEMINI_API_KEY="your_api_key"
+  ```
 
-Start the Spring Boot server:
+3. Start the backend service:
 
 ```bash
 mvn spring-boot:run
 ```
 
-Verify that the console outputs that the server is running on http://localhost:8080.
+The backend starts on `http://localhost:8080` by default.
 
-### 2. Frontend Environment
+## Frontend Setup
 
-Open a second terminal and navigate to the frontend directory:
+1. Open another terminal and change into the frontend folder:
 
 ```bash
 cd frontend
 ```
 
-Install the required Node dependencies:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-Start the Vite development server:
+3. Start the Vite development server:
 
 ```bash
 npm run dev
 ```
 
-Open the localhost URL provided by Vite in your browser.
+4. Open the local URL shown in the terminal (typically `http://localhost:5173`).
 
-## Usage Guidelines
+## API Behavior
 
-1. Grant the browser permission to access your webcam.
-2. Select the appropriate culture profile ("Sourdough" or "Kombucha").
-3. Ensure the physical culture is well-lit. The AI relies strictly on visual evidence; poor lighting yields inaccurate inferences.
-4. Click "Capture & Run Inference" to dispatch the payload to the Java API.
+- The frontend is configured to call the backend endpoint at `http://localhost:8080/api/fermentation/analyze`.
+- The backend requires authenticated requests for analysis and expects a JSON body containing:
+  - `base64Image` (string)
+  - `cultureType` (string)
+  - `cultureId` (number)
+- Authentication is handled via JWTs, and auth endpoints are available under `/auth`.
+- The backend uses an in-memory H2 database for users, cultures, and analyses.
+
+## Notes
+
+- Do not store your Gemini API key in source control.
+- If the frontend is unable to reach the backend, ensure the Spring Boot server is running on port `8080`.
+- The backend currently secures all non-`/auth` endpoints with JWT-based authentication.
+
+## Development Commands
+
+### Backend
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Known Limitations
+
+- The frontend currently sends image and culture type data, but the backend also expects a valid authenticated culture context (`cultureId`).
+- The backend is configured to use H2 in-memory persistence, which is reset each time the service restarts.
