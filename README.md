@@ -8,6 +8,19 @@ A full-stack application built with React + Vite for the frontend and Java Sprin
 - **Backend**: Java 17 + Spring Boot 3.2.4 + Spring Security + H2 in-memory database.
 - **AI Integration**: The backend dispatches visual fermentation analysis requests to the Google Gemini generative language API.
 
+## AI Features
+
+- Live webcam capture is converted to a base64 JPEG string in `frontend/src/App.jsx`.
+- The backend sends the captured image and culture type to Google Gemini in `backend/src/main/java/com/biostate/monitor/FermentationAnalyzer.java`.
+- The AI is prompted with sourdough and kombucha fermentation heuristics and returns a structured JSON result.
+- The response format includes:
+  - `status`
+  - `confidence`
+  - `visual_observations`
+  - `rag_reference`
+  - `actionable_advice`
+- Analysis results are persisted in the backend H2 database for later retrieval.
+
 ## Prerequisites
 
 - Java 17 or higher
