@@ -2,6 +2,16 @@
 
 A full-stack application built with React + Vite for the frontend and Java Spring Boot for the backend. It is designed to capture live culture imagery, send that image data to a backend analysis service, and produce a fermentation status result.
 
+## The Problem Space & Motivation
+
+Home fermentation (Sourdough, Kombucha) is highly variable and historically relies on manual tracking or the "vibe" of the culture. Existing digital trackers fail to account for the physical state of the organism. 
+
+I architected this system to bridge the physical-digital gap. The goal was twofold:
+
+1. **Practical:** Replace subjective visual analysis with deterministic, RAG-informed AI heuristics.
+
+2. **Technical:** Demonstrate how to properly integrate Multimodal LLMs into a strict, enterprise-grade architecture (Java/Spring Boot proxy enforcing Jackson JSON schemas) rather than relying on fragile, client-side API calls.
+
 ## Quick Start
 
 1. Start the backend service in one terminal:
