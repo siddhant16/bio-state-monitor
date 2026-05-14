@@ -7,92 +7,29 @@ The Bio-State Fermentation Monitor is a full-stack web application that combines
 ## Architecture Diagram
 
 ```mermaid
-graph TB
-    subgraph Client["🖥️ Client Layer"]
-        Browser["React 19 Browser"]
-        Webcam["📷 Webcam Capture"]
-        UI["UI Components"]
-    end
+graph LR
+    Browser["React Browser\n(Webcam Capture)"]
+    Frontend["React + Vite Frontend"]
+    Backend["Spring Boot Backend"]
+    Database["H2 Database"]
+    ExternalAI["Google Gemini AI"]
 
-    subgraph Frontend["Frontend - React + Vite + Tailwind"]
-        App["App.jsx<br/>Main Application"]
-        B64Encoder["Base64 Image<br/>Encoder"]
-    end
+    Browser --> Frontend
+    Frontend --> Backend
+    Backend --> Database
+    Backend --> ExternalAI
 
-    subgraph API["API Gateway & Security"]
-        CORS["CORS Handler"]
-        Auth["Authentication"]
-        JWT["JWT Token<br/>Validator"]
-    end
+    classDef client fill:#e1f5ff,stroke:#6fb7ff,stroke-width:1px;
+    classDef frontend fill:#f3e5f5,stroke:#d080d9,stroke-width:1px;
+    classDef backend fill:#e8f5e9,stroke:#6abf69,stroke-width:1px;
+    classDef data fill:#ede7f6,stroke:#8e7ecc,stroke-width:1px;
+    classDef external fill:#ffebee,stroke:#d46a6a,stroke-width:1px;
 
-    subgraph Controller["🎮 Controller Layer - Spring Boot"]
-        AuthCtrl["AuthController<br/>Login/Register"]
-        CultureCtrl["CultureController<br/>Manage Cultures"]
-        AnalysisCtrl["AnalysisController<br/>Get Analysis Results"]
-        HomeCtrl["HomeController<br/>Static Routes"]
-        FermCtrl["FermentationController<br/>Analysis Requests"]
-    end
-
-    subgraph Service["⚙️ Service Layer"]
-        UserSvc["UserService<br/>User Management"]
-        CultureSvc["CultureService<br/>Culture Logic"]
-        AnalysisSvc["AnalysisService<br/>Result Retrieval"]
-        FermAnalyzer["FermentationAnalyzer<br/>AI Integration"]
-    end
-
-    subgraph Repository["🗄️ Data Access Layer"]
-        UserRepo["UserRepository<br/>JPA"]
-        CultureRepo["CultureRepository<br/>JPA"]
-        AnalysisRepo["AnalysisRepository<br/>JPA"]
-    end
-
-    subgraph Database["💾 Database Layer"]
-        H2DB["H2 In-Memory<br/>Database"]
-    end
-
-    subgraph External["🌐 External Services"]
-        Gemini["Google Gemini<br/>Generative AI API"]
-    end
-
-    subgraph Models["📦 Data Models"]
-        User["User Model"]
-        Culture["Culture Model"]
-        Analysis["Analysis Model"]
-    end
-
-    Browser -->|"Webcam Feed"| Webcam
-    Webcam -->|"Video Frames"| App
-    App -->|"Convert to Base64"| B64Encoder
-    B64Encoder -->|"REST API Calls"| CORS
-    
-    CORS -->|"Auth Header"| JWT
-    JWT -->|"Validate Token"| Auth
-    Auth -->|"Route Request"| Controller
-    
-    Controller -->|"Process"| Service
-    FermCtrl -->|"Image + Culture"| FermAnalyzer
-    FermAnalyzer -->|"Send Image"| Gemini
-    Gemini -->|"Fermentation Status"| FermAnalyzer
-    FermAnalyzer -->|"Save Result"| AnalysisSvc
-    
-    Service -->|"Query/Save"| Repository
-    Repository -->|"SQL Operations"| H2DB
-    
-    Service -->|"Map To"| Models
-    Models -->|"Serialize"| API
-    API -->|"JSON Response"| App
-    App -->|"Display Results"| UI
-    UI -->|"Render"| Browser
-    
-    style Client fill:#e1f5ff
-    style Frontend fill:#f3e5f5
-    style API fill:#fff3e0
-    style Controller fill:#e8f5e9
-    style Service fill:#fce4ec
-    style Repository fill:#f1f8e9
-    style Database fill:#ede7f6
-    style External fill:#ffebee
-    style Models fill:#e0f2f1
+    class Browser client;
+    class Frontend frontend;
+    class Backend backend;
+    class Database data;
+    class ExternalAI external;
 ```
 
 ## Component Details
