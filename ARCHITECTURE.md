@@ -1,219 +1,124 @@
-# Bio-State Monitor Architecture
+# Bio-State Monitor — Architecture
 
-## System Overview
+A full-stack fermentation health monitor. Users point a webcam at a sourdough or kombucha culture; the app captures a frame, sends it through a secured backend, and returns an AI-generated assessment.
 
-The Bio-State Fermentation Monitor is a full-stack web application that combines real-time webcam capture with AI-powered fermentation analysis. It consists of a React frontend for user interaction and a Spring Boot backend for processing and data persistence.
+---
 
-## Architecture Diagram
+## System Diagram
 
 ```mermaid
-graph LR
-    Browser["React Browser\n(Webcam Capture)"]
-    Frontend["React + Vite Frontend"]
-    Backend["Spring Boot Backend"]
-    Database["H2 Database"]
-    ExternalAI["Google Gemini AI"]
+flowchart TD
+    subgraph Browser
+        A[Webcam Capture\nApp.jsx]
+    end
 
-    Browser --> Frontend
-    Frontend --> Backend
-    Backend --> Database
-    Backend --> ExternalAI
+    subgraph Frontend ["Frontend — React 19 + Vite"]
+        B[JWT Auth Manager]
+        C[Culture Manager]
+        D[Analysis Viewer]
+    end
 
-    classDef client fill:#e1f5ff,stroke:#6fb7ff,stroke-width:1px;
-    classDef frontend fill:#f3e5f5,stroke:#d080d9,stroke-width:1px;
-    classDef backend fill:#e8f5e9,stroke:#6abf69,stroke-width:1px;
-    classDef data fill:#ede7f6,stroke:#8e7ecc,stroke-width:1px;
-    classDef external fill:#ffebee,stroke:#d46a6a,stroke-width:1px;
+    subgraph Backend ["Backend — Spring Boot 3.2.4"]
+        E[Spring Security\nJWT Filter]
 
-    class Browser client;
-    class Frontend frontend;
-    class Backend backend;
-    class Database data;
-    class ExternalAI external;
+        subgraph Controllers
+            F[AuthController\n/auth/register, /auth/login]
+            G[CultureController\n/api/cultures]
+            H[FermentationController\n/api/fermentation/analyze]
+            I[AnalysisController\n/api/analyses]
+        end
+
+        subgraph Services
+            J[UserService]
+            K[CultureService]
+            L[FermentationAnalyzer]
+            M[AnalysisService]
+        end
+
+        subgraph Persistence
+            N[(H2 In-Memory DB)]
+        end
+    end
+
+    subgraph External
+        O[Google Gemini API\nmultimodal vision]
+    end
+
+    A -->|base64 JPEG| B
+    B -->|Bearer token| E
+    C --> G
+    D --> I
+
+    E --> F
+    E --> G
+    E --> H
+    E --> I
+
+    F --> J --> N
+    G --> K --> N
+    H --> L -->|image + culture type| O
+    O -->|JSON assessment| L --> M --> N
+    I --> M
 ```
 
-## Component Details
+---
 
-### Frontend Layer
+## Request Flow
 
-**Technology Stack:** React 19, Vite, Tailwind CSS, Lucide Icons
+1. **Capture** — React grabs a webcam frame and encodes it as base64 JPEG
+2. **Auth** — JWT attached to `Authorization: Bearer` header; Spring Security validates on every protected route
+3. **Analyze** — `POST /api/fermentation/analyze` carries `{ base64Image, cultureType, cultureId }`
+4. **AI call** — `FermentationAnalyzer` forwards image + culture type to Gemini with fermentation heuristics baked into the prompt
+5. **Response** — Gemini returns structured JSON; backend persists it and returns to client
 
-- **App.jsx**: Main application component that handles:
-  - Webcam live feed capture
-  - Image encoding to Base64 format
-  - REST API communication
-  - Results display and user interface
+**Gemini response shape:**
+```json
+{
+  "status": "healthy | at-risk | complete",
+  "confidence": 0.0–1.0,
+  "visual_observations": "...",
+  "rag_reference": "...",
+  "actionable_advice": "..."
+}
+```
 
-**Key Features:**
-- Real-time webcam integration
-- Base64 image encoding for API transmission
-- JWT token management for authentication
-- Responsive UI with Tailwind CSS
+---
 
-### API Gateway & Security
+## Data Models
 
-**Authentication:** Spring Security + JWT (JSON Web Tokens)
+| Model    | Key Fields                                                        |
+|----------|-------------------------------------------------------------------|
+| User     | id, username, email, password (hashed), timestamps               |
+| Culture  | id, name, type (sourdough / kombucha), user_id, created_at       |
+| Analysis | id, culture_id, status, confidence, observations, advice, timestamp |
 
-- CORS handling for frontend communication
-- JWT token validation on all protected endpoints
-- Automatic token refresh mechanism
+---
 
-### Backend Controller Layer (Spring Boot)
+## Tech Stack
 
-Five specialized controllers manage different aspects of the application:
+| Layer    | Technology                                      |
+|----------|-------------------------------------------------|
+| Frontend | React 19, Vite, Tailwind CSS, lucide-react      |
+| Backend  | Java 17, Spring Boot 3.2.4, Spring Security, JPA |
+| Database | H2 in-memory                                    |
+| AI       | Google Gemini (multimodal)                      |
+| Auth     | JWT (io.jsonwebtoken)                           |
 
-1. **AuthController**: User authentication
-   - User login and registration
-   - JWT token generation
+---
 
-2. **HomeController**: Static content routes
-   - Serves frontend assets
-   - Health check endpoints
+## Environment Variables
 
-3. **CultureController**: Culture management
-   - CRUD operations for fermentation cultures
-   - Culture type management (sourdough, kombucha, etc.)
+| Variable        | Required | Description                        |
+|-----------------|----------|------------------------------------|
+| `GEMINI_API_KEY` | Yes      | Authenticates backend with Gemini  |
+| `BACKEND_PORT`  | No       | Defaults to `8080`                 |
+| `FRONTEND_PORT` | No       | Defaults to `5173`                 |
 
-4. **FermentationController**: Analysis requests
-   - Receives webcam image frames
-   - Triggers AI analysis via FermentationAnalyzer
-   - Returns analysis results
+---
 
-5. **AnalysisController**: Historical data retrieval
-   - Fetches previous analysis results
-   - Provides analysis history for users
+## Known Limitations & Future Work
 
-### Service Layer
-
-**Business Logic Implementation:**
-
-1. **UserService**: User account management
-   - User registration and profile management
-   - Password handling
-
-2. **CultureService**: Culture management logic
-   - Culture creation and updates
-   - Culture type validation
-
-3. **AnalysisService**: Result management
-   - Stores analysis results
-   - Retrieves historical analyses
-
-4. **FermentationAnalyzer**: AI Integration
-   - Interfaces with Google Gemini API
-   - Processes fermentation analysis requests
-   - Formats responses with:
-     - Status (healthy, at-risk, complete, etc.)
-     - Confidence levels
-     - Visual observations
-     - RAG references
-     - Actionable advice
-
-### Data Access Layer (JPA Repositories)
-
-- **UserRepository**: User entity persistence
-- **CultureRepository**: Culture entity persistence
-- **AnalysisRepository**: Analysis result persistence
-
-All repositories use Spring Data JPA for ORM functionality.
-
-### Data Models
-
-**User Model:**
-- User ID
-- Username
-- Email
-- Password (hashed)
-- Created/Updated timestamps
-
-**Culture Model:**
-- Culture ID
-- Culture name
-- Culture type (sourdough, kombucha, etc.)
-- User reference
-- Creation date
-
-**Analysis Model:**
-- Analysis ID
-- Culture reference
-- Image data reference
-- Status
-- Confidence score
-- Visual observations
-- RAG references
-- Actionable advice
-- Timestamp
-
-### Database
-
-**Technology:** H2 In-Memory Database
-
-- Lightweight, embedded database
-- No external database setup required
-- Perfect for development and testing
-- Data persists for the application lifecycle
-
-### External Services
-
-**Google Gemini Generative AI API**
-
-- Receives culture image and type
-- Analyzes fermentation visual indicators
-- Returns structured JSON response with:
-  - Fermentation status
-  - Confidence level
-  - Visual observations
-  - Recommendations
-
-## Data Flow
-
-1. **Image Capture**: User captures webcam frame via React frontend
-2. **Encoding**: Image converted to Base64 format
-3. **API Request**: Frontend sends image + culture type to backend via REST API
-4. **Authentication**: JWT token validated by security filters
-5. **Controller Processing**: FermentationController receives request
-6. **AI Analysis**: FermentationAnalyzer sends image to Google Gemini API
-7. **Response Processing**: AI response parsed and formatted
-8. **Data Persistence**: Results stored in H2 database via repository layer
-9. **Response**: Analysis results returned to frontend as JSON
-10. **UI Display**: React frontend displays results to user
-
-## Technology Stack
-
-### Frontend
-- React 19
-- Vite (build tool)
-- Tailwind CSS (styling)
-- Lucide Icons (UI icons)
-
-### Backend
-- Java 17
-- Spring Boot 3.2.4
-- Spring Security
-- Spring Data JPA
-- H2 Database
-- JWT (io.jsonwebtoken)
-
-### External
-- Google Gemini API (AI analysis)
-
-## Environment Configuration
-
-Required environment variables:
-- `GEMINI_API_KEY`: Google Gemini API key for fermentation analysis
-
-See `backend/src/main/resources/application.properties` for additional configuration.
-
-## Scalability Considerations
-
-**Current Design (Development):**
-- H2 in-memory database suitable for single-user or small team testing
-- JWT-based stateless authentication allows horizontal scaling
-- Stateless service layer enables microservice migration
-
-**Future Production Considerations:**
-- Replace H2 with persistent PostgreSQL or MySQL
-- Add caching layer (Redis) for frequently accessed analyses
-- Implement API rate limiting
-- Add monitoring and logging (ELK stack)
-- Consider containerization (Docker/Kubernetes)
+- **H2 is ephemeral** — all data resets on restart. Replace with PostgreSQL for production.
+- **Synchronous AI calls** — Gemini requests block the HTTP thread. Consider `@Async` or a job queue under load.
+- **No image storage** — base64 frames are analyzed but not durably stored; historical visual comparison isn't possible today.
+- **Single user scope** — no multi-tenancy or role-based access beyond basic auth.
