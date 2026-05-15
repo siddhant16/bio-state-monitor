@@ -103,6 +103,7 @@ flowchart TD
 | Database | H2 in-memory                                    |
 | AI       | Google Gemini (multimodal)                      |
 | Auth     | JWT (io.jsonwebtoken)                           |
+| Testing  | JUnit 5, Mockito (Backend); Jest, React Testing Library (Frontend) |
 
 ---
 
