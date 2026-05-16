@@ -1,0 +1,7 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "chat.tools.terminal.autoApprove": {
+        "git commit": true,
+        "git push": true
+    }
+}
