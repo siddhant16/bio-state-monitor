@@ -126,6 +126,21 @@ export default function App() {
         </div>
       </header>
 
+      <section className="max-w-6xl mx-auto mb-6 bg-slate-900 border border-slate-800 rounded-lg p-4 text-slate-300">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">How to use the monitor</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Select the correct culture type, align the camera with a clean view of the culture,
+              then tap Capture &amp; Run Inference. Use natural light when possible and keep your device steady.
+            </p>
+          </div>
+          <div className="text-xs text-slate-500">
+            Tip: If the camera fails, refresh the page and allow browser camera permissions.
+          </div>
+        </div>
+      </section>
+
       <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section className="flex flex-col gap-4">
           <div className="bg-slate-900 border border-slate-800 rounded-lg overflow-hidden relative aspect-video">

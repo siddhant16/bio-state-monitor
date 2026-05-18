@@ -144,6 +144,26 @@ npm run dev
 3. Receive a JWT token from the login response.
 4. Attach the JWT to authenticated requests using the `Authorization: Bearer <token>` header.
 
+## User Guide
+
+- **Choose culture type** before capture: select `sourdough` or `kombucha` so the AI uses the right fermentation heuristics.
+- **Keep the frame stable** and use even lighting. Avoid glare or heavy shadows on the culture.
+- **Wait for the backend**: capture sends the frame to Spring Boot, then the app displays analysis results once Gemini returns them.
+- **Result sections**:
+  - `status` shows fermentation health.
+  - `confidence` indicates how sure the AI is.
+  - `visual_observations` explains what the model saw.
+  - `actionable_advice` gives the next steps.
+
+## Documentation & User Experience
+
+This repository includes:
+
+- A well-organized `README.md` with setup steps, API behavior, and auth flow.
+- A `.env.example` file for easy local configuration.
+- In-app UX guidance inside the frontend to help users capture better images and understand results.
+- Clear error messages when the camera or backend connection fails.
+
 ## Notes
 
 - Do not store your Gemini API key in source control.

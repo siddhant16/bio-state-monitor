@@ -117,6 +117,15 @@ flowchart TD
 
 ---
 
+## Documentation & User Experience
+
+- **Onboarding docs**: `README.md` includes setup, auth flow, API payload details, and user guidance.
+- **Local configuration helper**: `.env.example` makes environment variable setup explicit and safe.
+- **In-app guidance**: the frontend now displays capture instructions and camera troubleshooting advice.
+- **Result clarity**: the UI presents status, confidence, observations, and actionable advice in clear sections.
+
+---
+
 ## Known Limitations & Future Work
 
 - **H2 is ephemeral** — all data resets on restart. Replace with PostgreSQL for production.
