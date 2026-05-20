@@ -99,11 +99,12 @@ flowchart TD
 | Layer    | Technology                                      |
 |----------|-------------------------------------------------|
 | Frontend | React 19, Vite, Tailwind CSS, lucide-react      |
-| Backend  | Java 17, Spring Boot 3.2.4, Spring Security, JPA |
+| Backend  | Java 17, Spring Boot 3.2.4, Spring Security, JPA, Actuator |
 | Database | H2 in-memory                                    |
 | AI       | Google Gemini (multimodal)                      |
 | Auth     | JWT (io.jsonwebtoken)                           |
 | Testing  | JUnit 5, Mockito (Backend); Jest, React Testing Library (Frontend) |
+| Monitoring | Spring Boot Actuator (health, metrics, info)    |
 
 ---
 
@@ -123,6 +124,17 @@ flowchart TD
 - **Local configuration helper**: `.env.example` makes environment variable setup explicit and safe.
 - **In-app guidance**: the frontend now displays capture instructions and camera troubleshooting advice.
 - **Result clarity**: the UI presents status, confidence, observations, and actionable advice in clear sections.
+
+---
+
+## Monitoring & Observability
+
+- **Health checks**: Spring Boot Actuator exposes `/actuator/health` for liveness and readiness probes.
+- **Metrics**: Exposed via `/actuator/metrics` to track JVM memory, request counts, and custom application metrics.
+- **Structured logging**: Logs are formatted with timestamps, thread info, and log levels for easy debugging.
+  - Backend logs to console with pattern: `timestamp - message`.
+  - Configure `logging.level.com.biostate.monitor=DEBUG` in `application.properties` for verbose output during development.
+- **Application info**: `/actuator/info` returns build and version metadata.
 
 ---
 
