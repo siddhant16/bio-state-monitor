@@ -37,7 +37,7 @@ class UserServiceTest {
         // Arrange
         String username = "testuser";
         String email = "test@example.com";
-        String password = "password";
+        String password = "Password1!";
         String encodedPassword = "encodedPassword";
 
         when(userRepository.existsByUsername(username)).thenReturn(false);
@@ -60,7 +60,7 @@ class UserServiceTest {
         // Arrange
         String username = "testuser";
         String email = "test@example.com";
-        String password = "password";
+        String password = "Password1!";
 
         when(userRepository.existsByUsername(username)).thenReturn(true);
 

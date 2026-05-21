@@ -34,6 +34,10 @@ public class AuthController {
         String email = request.get("email");
         String password = request.get("password");
 
+        if (username == null || email == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "username, email, and password are required"));
+        }
+
         try {
             User user = userService.registerUser(username, email, password);
             Map<String, Object> response = new HashMap<>();
@@ -50,12 +54,16 @@ public class AuthController {
         String username = request.get("username");
         String password = request.get("password");
 
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "username and password are required"));
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
+                    new UsernamePasswordAuthenticationToken(username.trim(), password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String token = jwtUtil.generateToken(username);
+            String token = jwtUtil.generateToken(username.trim());
             return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));

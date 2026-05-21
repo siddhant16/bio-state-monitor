@@ -138,6 +138,16 @@ flowchart TD
 
 ---
 
+## Security & Compliance
+
+- **Authentication**: All protected routes require JWT bearer tokens issued after login.
+- **Password hashing**: User passwords are stored only as BCrypt hashes.
+- **Input validation**: Registration validates usernames, email formats, and password strength before persistence.
+- **CORS and headers**: The backend restricts allowed origins to the frontend host and enables safe response headers.
+- **Secrets handling**: `GEMINI_API_KEY` is defined outside source control and loaded via environment variables.
+
+---
+
 ## Known Limitations & Future Work
 
 - **H2 is ephemeral** — all data resets on restart. Replace with PostgreSQL for production.

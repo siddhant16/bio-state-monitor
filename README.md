@@ -164,6 +164,14 @@ This repository includes:
 - In-app UX guidance inside the frontend to help users capture better images and understand results.
 - Clear error messages when the camera or backend connection fails.
 
+## Security & Compliance
+
+- The backend uses **JWT authentication** for protected API routes and **BCrypt** for password hashing.
+- User inputs are validated before registration to enforce safe usernames, proper email formats, and strong passwords.
+- The API uses **CORS restrictions** to allow requests only from `http://localhost:5173` in development.
+- Sensitive secrets like `GEMINI_API_KEY` should always be stored outside source control and loaded from environment variables.
+- Security headers such as **Content-Security-Policy** and **X-Content-Type-Options** are enabled in the backend.
+
 ## Notes
 
 - Do not store your Gemini API key in source control.
