@@ -195,6 +195,29 @@ npm install
 npm run dev
 ```
 
+## Docker & Deployment
+
+### Build and Run with Docker Compose
+
+```bash
+export GEMINI_API_KEY="your_api_key"
+docker-compose up --build
+```
+
+This starts both the backend (port 8080) and frontend (port 5173) with health checks.
+
+### API Documentation
+
+Swagger UI is available at `http://localhost:8080/swagger-ui.html` when the backend is running.
+
+## CI/CD Pipeline
+
+GitHub Actions automatically runs tests and builds on every push to `main`:
+- Backend: Maven build, unit tests, and compilation checks
+- Frontend: ESLint, Vite build, and Jest tests
+
+See `.github/workflows/ci-cd.yml` for configuration.
+
 ## Known Limitations
 
 - The frontend currently sends image and culture type data, but the backend also expects a valid authenticated culture context (`cultureId`).

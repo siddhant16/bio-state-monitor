@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/fermentation")
-@CrossOrigin(origins = "*") 
 public class FermentationController {
 
     private final FermentationAnalyzer analyzer;
