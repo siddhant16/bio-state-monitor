@@ -25,9 +25,9 @@ describe('App Component', () => {
     render(<App />);
 
     // Check for main elements
-    expect(screen.getByText(/Bio-State Monitor/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /analyze/i })).toBeInTheDocument();
-    expect(screen.getByRole('combobox')).toBeInTheDocument(); // Culture type select
+    expect(screen.getByText(/Bio-State Fermentation Monitor/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Capture & Run Inference/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Sourdough/i })).toBeInTheDocument(); // Culture type button
   });
 
   test('displays error when camera access fails', async () => {
@@ -44,9 +44,16 @@ describe('App Component', () => {
   test('changes culture type', () => {
     render(<App />);
 
-    const select = screen.getByRole('combobox');
-    fireEvent.change(select, { target: { value: 'kombucha' } });
+    const sourdoughBtn = screen.getByRole('button', { name: /Sourdough/i });
+    const kombuchaBtn = screen.getByRole('button', { name: /Kombucha/i });
 
-    expect(select.value).toBe('kombucha');
+    // Initially Sourdough should be active (has bg-blue-600 class)
+    expect(sourdoughBtn).toHaveClass('bg-blue-600');
+
+    // Click Kombucha button
+    fireEvent.click(kombuchaBtn);
+
+    // Kombucha should be active now
+    expect(kombuchaBtn).toHaveClass('bg-blue-600');
   });
 });

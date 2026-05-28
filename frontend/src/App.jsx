@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Camera, Activity, AlertTriangle, CheckCircle, RefreshCcw, BookOpen, Settings } from 'lucide-react';
 
 export default function App() {
@@ -10,6 +10,7 @@ export default function App() {
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
 
   const startCamera = async () => {
     try {
@@ -18,19 +19,27 @@ export default function App() {
         video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } 
       });
       setStream(mediaStream);
+      streamRef.current = mediaStream;
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
-    } catch (err) {
+    } catch {
       setError("Failed to access camera. Ensure permissions are granted.");
     }
   };
 
   useEffect(() => {
-    startCamera();
+    let isMounted = true;
+    const initCamera = async () => {
+      if (isMounted) {
+        await startCamera();
+      }
+    };
+    initCamera();
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+      isMounted = false;
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
   }, []);
