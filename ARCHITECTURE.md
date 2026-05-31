@@ -18,7 +18,7 @@ flowchart TD
         D[Analysis Viewer]
     end
 
-    subgraph Backend ["Backend — Spring Boot 3.2.4"]
+    subgraph Backend ["Backend — Spring Boot 4.0.6"]
         E[Spring Security\nJWT Filter]
 
         subgraph Controllers
@@ -98,12 +98,12 @@ flowchart TD
 
 | Layer    | Technology                                      |
 |----------|-------------------------------------------------|
-| Frontend | React 19, Vite, Tailwind CSS, lucide-react      |
-| Backend  | Java 17, Spring Boot 3.2.4, Spring Security, JPA, Actuator |
+| Frontend | React 19.2.5, Vite 8.0.10, Tailwind CSS 3.4.1, lucide-react 1.14.0 |
+| Backend  | Java 25, Spring Boot 4.0.6, Spring Security, JPA, Actuator |
 | Database | H2 in-memory                                    |
 | AI       | Google Gemini (multimodal)                      |
-| Auth     | JWT (io.jsonwebtoken)                           |
-| Testing  | JUnit 5, Mockito (Backend); Jest, React Testing Library (Frontend) |
+| Auth     | JWT (io.jsonwebtoken 0.11.5)                    |
+| Testing  | JUnit 5, Mockito (Backend); Jest 29.7.0, React Testing Library 16.0.0 (Frontend) |
 | Monitoring | Spring Boot Actuator (health, metrics, info)    |
 
 ---
