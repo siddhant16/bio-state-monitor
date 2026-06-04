@@ -30,8 +30,8 @@ I architected this system to bridge the physical-digital gap. The goal was twofo
 
 ## Architecture
 
-- **Frontend**: React 19 + Vite + Tailwind CSS + lucide-react.
-- **Backend**: Java 17 + Spring Boot 3.2.4 + Spring Security + H2 in-memory database.
+- **Frontend**: React 19.2.5 + Vite 8.0.10 + Tailwind CSS 3.4.1 + lucide-react 1.14.0.
+- **Backend**: Java 25 + Spring Boot 4.0.6 + Spring Security + H2 in-memory database.
 - **AI Integration**: The backend dispatches visual fermentation analysis requests to the Google Gemini generative language API.
 
 ## AI Features
@@ -49,9 +49,9 @@ I architected this system to bridge the physical-digital gap. The goal was twofo
 
 ## Prerequisites
 
-- Java 17 or higher
+- Java 25 or higher
 - Maven 3.6 or higher
-- Node.js 18 or higher
+- Node.js 20 or higher
 - A valid Google Gemini API key
 
 ## Environment Variables
